@@ -1,0 +1,2 @@
+C:\Users\igosh\source\repos\Lab1\Debug\Lab1.exe
+C:\Users\igosh\source\repos\Lab1\Debug\Lab1.pdb

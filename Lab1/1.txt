@@ -1,0 +1,3 @@
+iden 1
+dlina 4
+diametr 5

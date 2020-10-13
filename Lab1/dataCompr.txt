@@ -1,0 +1,5 @@
+Identificator 1
+Naimenovanie 4
+Kol-vo cehov 5
+Kol-vo rabochix cehov 4
+Effectivnost 1

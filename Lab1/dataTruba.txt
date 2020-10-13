@@ -1,0 +1,4 @@
+Identificator 1
+Diametr 5
+Dlina 5
+Ne v remonte
