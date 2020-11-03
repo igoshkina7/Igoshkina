@@ -1,0 +1,8 @@
+﻿  lb2.cpp
+C:\Users\igosh\source\repos\lb2\lb2.cpp(62,13): error C3861: CheckNumber: идентификатор не найден
+C:\Users\igosh\source\repos\lb2\lb2.cpp(64,14): error C3861: CheckNumber: идентификатор не найден
+C:\Users\igosh\source\repos\lb2\lb2.cpp(82,22): error C3861: CheckNumber: идентификатор не найден
+C:\Users\igosh\source\repos\lb2\lb2.cpp(84,30): error C3861: CheckNumber: идентификатор не найден
+C:\Users\igosh\source\repos\lb2\lb2.cpp(87,17): error C3861: CheckNumber: идентификатор не найден
+C:\Users\igosh\source\repos\lb2\lb2.cpp(111,2): error C2562: CheckNumber: функция типа "void", возвращающая значение
+C:\Users\igosh\source\repos\lb2\lb2.cpp(103): message : см. объявление "CheckNumber"
