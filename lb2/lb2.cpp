@@ -22,10 +22,7 @@ struct Compressor   //создание нового класса
 	double efficiency;
 };
 
-//bool IsScoreCorrect(double d)
-//{
-//	return d >= 2 && d <= 5;
-//}
+
 
 Truba LoadTruba (ifstream& fin)
 {
@@ -141,9 +138,9 @@ void SaveTruba(ofstream& fout, const Truba& t)
 //
 //}
 
-void change_status(bool& status) //меняем статус трубы
+void change_status(Truba& t) 
 {
-	status = !status;
+	t.Edit_pipe();
 }
 
 void PrintMenu()
@@ -151,8 +148,8 @@ void PrintMenu()
 	cout << "1. Create pipe" << endl;
 	cout << "2. Create compressor" << endl;
 	cout << "3. Change pipe status" << endl;
-	cout << "4. Print pipe info" << endl;
-	cout << "5. Print compressor info" << endl;
+	cout << "4. Print pipe's info" << endl;
+	cout << "5. Print compressor's info" << endl;
 	cout << "6. Save pipe to file" << endl;
 	cout << "7. Save compressor to file" << endl;
 	cout << "8. Load pipe's info" << endl;
@@ -168,21 +165,21 @@ void PrintMenu()
 	cout << "Choose action: ";
 }
 
-//
-//Truba& SelectTruba(vector<Truba>& p)
-//{
-//	cout << "Enter pipe's index: ";
-//	unsigned int index = GetCorrectNumber(1u, p.size());
-//	return p[index - 1];
-//}
-//
-//Compressor& SelectCompressor(vector<Compressor>& cs)
-//{
-//	cout << "Enter compressor's index: ";
-//	unsigned int index = GetCorrectNumber(1u, cs.size());
-//	return cs[index - 1];
-//}
-//
+
+Truba& SelectTruba(vector<Truba>& p)
+{
+	cout << "Enter pipe's index: ";
+	unsigned int index = GetCorrectNumber(1u, p.size());
+	return p[index - 1];
+}
+
+Compressor& SelectCompressor(vector<Compressor>& cs)
+{
+	cout << "Enter compressor's index: ";
+	unsigned int index = GetCorrectNumber(1u, cs.size());
+	return cs[index - 1];
+}
+
 //
 //vector<int> FindPipeByName(const vector<Truba>& pipes, string name = "Unknown")
 //{
@@ -245,15 +242,19 @@ void PrintMenu()
 int main()
 {
 	vector <Truba> pipes;
-	vector <Compressor> cstations;
-	pipes.resize(3);
-
+	vector <Compressor> ks;
+	
+	//vector <int> res;
+	int i;
+	/*double param;
+	string name;*/
 
 	while (1)
 	{
+		cout << "Select action:" << endl;
 		PrintMenu();
-
-		switch (GetCorrectNumber(0, 17))
+		
+		switch (GetCorrectNumber(17))
 		{
 		case 1:
 		{
@@ -266,14 +267,14 @@ int main()
 		{
 			Compressor compr;
 			cin >> compr;
-			cstations.push_back(compr);
+			ks.push_back(compr);
 			break;
 		}
-		/*case 3:
+		case 3:
 		{
-			change_status(tr.remont);
+			change_status(SelectTruba(pipes));
 			break;
-		}*/
+		}
 		case 4:
 		{
 			for (auto& tr : pipes)
@@ -282,26 +283,74 @@ int main()
 		}
 		case 5:
 		{
-			for (auto& compr : cstations)
+			for (auto& compr : ks)
 				cout << compr << endl;
-			break;
-		}
-		/*case 5:
-		{
-			EditStudent(SelectStudent(group));
 			break;
 		}
 		case 6:
 		{
-			string name = "Unknown";
-			for (int i : FindStudentsByFilter(group, CheckByName, name))
-				cout << group[i];
-
-			for (int i : FindStudentsByFilter(group, CheckByScore, 4.0))
-				cout << group[i];
-
+			Truba tr;
+			ofstream fout;
+			fout.open("Truba.txt", ios::out);
+			if (fout.is_open()) 
+			{
+				fout << pipes.size() << endl;
+				for (Truba tr : pipes)
+					fout << tr;
+				fout.close();
+			}
 			break;
-		}*/
+		}
+		case 7:
+		{
+			Compressor comprk;
+			ofstream fout;
+			fout.open("CS.txt", ios::out);
+			if (fout.is_open())
+			{
+				fout << ks.size() << endl;
+				for (Compressor compr : ks)
+					fout << compr;
+				fout.close();
+			}
+			break;
+		}
+		case 8:
+		{	
+			Truba tr;
+			ifstream fin;
+			fin.open("Truba.txt", ios::in);
+			if (fin.is_open()) 
+			{
+				int count;
+				fin >> count;
+				while (count--)
+				{
+					fin >> tr;
+					pipes.push_back(tr);
+				}
+				fin.close();
+			}
+			break;
+		}
+		case 10:
+		{	
+			Compressor compr;
+			ifstream fin;
+			fin.open("CS.txt", ios::in);
+			if (fin.is_open()) 
+			{
+				int count;
+				fin >> count;
+				while (count--)
+				{
+					fin >> compr;
+					ks.push_back(compr);
+				}
+				fin.close();
+			}
+			break;
+		}
 		case 0:
 		{
 			return 0;
