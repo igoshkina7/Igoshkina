@@ -8,18 +8,17 @@ ostream& operator << (ostream& out, const CKS& compr)
 	out << "Compressor"
 		<< " id: " << compr.id
 		<< " Name: " << compr.name
-		<< " Number of workshops in work/Number of workshop = " << compr.kolvo_workshops_in_work << "/" << compr.kolvo_workshops
+		<< " Number of workshops in work/Number of workshop = " << compr.kolvo_workshops_in_work << "/" << compr.kolvo_workshops << " = " << compr.kolvo_workshops_in_work*100/compr.kolvo_workshops << "%"
 		<< " Efficiency: " << compr.efficiency << endl;
 	return out;
 }
 
 istream& operator >> (istream& in, CKS& new_ks)
 {
-	//cout << "id=" << endl;
-	//new_ks.id = GetCorrectNumber(1000);
 	cout << "Type name: " << endl;
-	/*cin.ignore(10000, '\n');
-	getline(cin, new_ks.Name);*/
+	cin.clear();
+	cin.ignore(10000, '\n');
+	getline(cin, new_ks.name);
 	cout << "Type number of workshops: " << endl;
 	new_ks.kolvo_workshops = GetCorrectNumber(100);
 	cout << "Type number of workshops in work: " << endl;

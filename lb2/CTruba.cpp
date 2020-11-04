@@ -7,6 +7,7 @@ ostream& operator << (ostream& out, const Truba& tr)
 {
 	out << "Pipe"
 		<< " id: " << tr.id
+		<< " Name: " << tr.name
 		<< " Length: " << tr.length
 		<< " Diameter: " << tr.diametr
 		<< (tr.remont ? " V remonte" : " Ne v remonte") << endl;
@@ -15,8 +16,10 @@ ostream& operator << (ostream& out, const Truba& tr)
 
 istream& operator >> (istream& in, Truba& new_tr)
 {
-	//cout << "id = " << endl;
-	//new_tr.id = GetCorrectNumber(1000);
+	cout << "Type name: " << endl;
+	cin.clear();
+	cin.ignore(10000, '\n');
+	getline(cin, new_tr.name);
 	cout << "Type length: " << endl;
 	new_tr.length = GetCorrectNumber(1000.0); //тип double за счет точки
 	cout << " Type diametr: " << endl;
@@ -27,13 +30,13 @@ istream& operator >> (istream& in, Truba& new_tr)
 
 ofstream& operator<<(ofstream& fout, const Truba& tr)
 {
-	fout << tr.id << endl << tr.diametr << endl << tr.length << endl << tr.remont << endl;
+	fout << tr.id << endl << tr.name << endl << tr.diametr << endl << tr.length << endl << tr.remont << endl;
 	return fout;
 }
 
 ifstream& operator>>(ifstream& fin, Truba& tr)
 {
-	fin >> tr.id >> tr.diametr >> tr.length >> tr.remont;
+	fin >> tr.id >> tr.name >> tr.diametr >> tr.length >> tr.remont;
 	return fin;
 }
 
@@ -43,8 +46,12 @@ Truba::Truba()
 	id = IDT++;
 }
 
-void Truba::EditTruba()
+void Truba::EditTrubaTrue()
 {
 	remont = 1;
 }
 
+void Truba::EditTrubaFalse()
+{
+	remont = 0;
+}

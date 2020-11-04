@@ -145,7 +145,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CKS.h" />
-    <ClInclude Include="CStudent.h" />
     <ClInclude Include="CTruba.h" />
     <ClInclude Include="Utils.h" />
   </ItemGroup>

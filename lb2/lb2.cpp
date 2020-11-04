@@ -10,21 +10,21 @@ using namespace std;
 Truba& SelectTruba(vector <Truba>& tr)
 {
 	cout << "Enter index(0-" << tr.size()-1 << "): ";
-	unsigned int index = GetCorrectNumber(tr.size() - 1);
+	unsigned int index = GetCorrectIndex(tr.size() - 1);
 	return tr[index];
 }
 
 CKS& SelecCKS(vector <CKS>& ks)
 {
 	cout << "Enter index(0-" << ks.size()-1 << "): ";
-	unsigned int index = GetCorrectNumber(ks.size() - 1); //только положиетльные числа, диапазон в два раза больше
+	unsigned int index = GetCorrectIndex(ks.size() - 1); //только положиетльные числа, диапазон в два раза больше
 	return ks[index];
 }
 
 
 void change_status(Truba& t) 
 {
-	t.EditTruba();
+	t.remont = !t.remont;
 }
 
 void PrintMenu()
@@ -58,7 +58,7 @@ using FilterСKS = bool(*)(const CKS& c, T param);
 
 bool CheckByLength(const Truba& t, double param)
 {
-	return t.length > param;
+	return t.length == param;
 }
 
 bool CheckByRemont(const Truba& t, bool param)
@@ -70,10 +70,11 @@ bool CheckByName(const CKS& c, string param)
 {
 	return c.name == param;
 }
-
 bool CheckByProcent(const CKS& c, double param)
 {
-	return ((c.kolvo_workshops - c.kolvo_workshops_in_work) / c.kolvo_workshops_in_work * 100) > param;
+	int k;
+	k = c.kolvo_workshops_in_work * 100 / c.kolvo_workshops;
+	return  100-k == param;
 }
 
 template<typename T>
@@ -108,32 +109,30 @@ vector<int> FindCKSByFilter(const vector<CKS>& ks, FilterСKS<T> f, T param)
 void deleteTR(vector <Truba>& pipes)
 {
 	cout << endl << "Type pipe's ID KS delite: " << endl;
-	int i = GetCorrectNumber(pipes.size());
+	int i = GetCorrectIndex(pipes.size());
 	pipes.erase(pipes.begin() + i);   //https://www.geeksforgeeks.org/vector-erase-and-clear-in-cpp/ и https://www.cplusplus.com/reference/vector/vector/erase/
 }                                     //через указатель слишком сложно делать
 
 void deleteCKS(vector <CKS>& ks)
 {
 	cout << endl << "Type KS's ID to delite: " << endl;
-	int i = GetCorrectNumber(ks.size());
+	int i = GetCorrectIndex(ks.size());
 	ks.erase(ks.begin() + i);
 }
 
-//vector <Truba> EditTr(vector<Truba>& pipes, double x)
-//{
-//
-//	int i = 0;
-//	for (auto& tr : pipes)
-//	{
-//		
-//		if (tr.length > x)
-//		{
-//			tr.EditTruba();
-//		}
-//		i++;
-//	}
-//	return pipes;
-//}
+vector <Truba> EditTr(vector<Truba>& pipes, double x, double y)
+{
+
+	int i = 0;
+	for (auto& tr : pipes)
+	{
+		
+		if ((tr.length <= x) && (tr.diametr <= y))
+			tr.EditTrubaTrue();
+		i++;
+	}
+	return pipes;
+}
 
 int main()
 {
@@ -150,7 +149,7 @@ int main()
 		cout << "Select action:" << endl;
 		PrintMenu();
 		
-		switch (GetCorrectNumber(16))
+		switch (GetCorrectIndex(16))
 		{
 		case 1:
 		{
@@ -267,7 +266,8 @@ int main()
 		}
 		case 13:
 		{
-			for (int i : FindTrubaByFilter(pipes, CheckByRemont, false))
+			cout << "Type status: ";
+			for (int i : FindTrubaByFilter(pipes, CheckByRemont, true))
 				cout << pipes[i];
 			break;
 		}
@@ -286,16 +286,17 @@ int main()
 				cout << ks[i];
 			break;
 		}
-		/*case 16:
-		{	double d;
-		cout << "Edit pipe";
-		d = GetCorrectNumber(2000.0);
-		for (int i : FindTrubaByFilter<double>(pipes, CheckByLength, d))
-		{
-			Edit(pipe, d);
-		}
+		case 16:
+		{	
+			double x, y;
+			cout << "Edit pipe's lenght :";
+			x = GetCorrectNumber(2000.0);
+			cout << "Edit pipe's diametr: ";
+			y = GetCorrectNumber(2000.0);
+			for (int i : FindTrubaByFilter<double>(pipes, CheckByLength, x))
+				EditTr(pipes, x, y);
 		break;
-		}*/
+		}
 		case 0:
 		{
 			return 0;

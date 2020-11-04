@@ -14,12 +14,12 @@ class Truba
 	
 	int id;  //приватная переменная, чтобы пользователь не поменял на неверные данные
 public:
+	string name;
 	double diametr;
 	double length;
 	bool remont;
 	static int IDT;
 	Truba();
-	void EditTruba();
-	
-
+	void EditTrubaTrue();
+	void EditTrubaFalse();
 };

@@ -1,3 +1,3 @@
 ﻿  lb2.cpp
-C:\Users\igosh\source\repos\lb2\lb2.cpp(144,6): warning C4101: i: неиспользованная локальная переменная
+C:\Users\igosh\source\repos\lb2\lb2.cpp(143,6): warning C4101: i: неиспользованная локальная переменная
   lb2.vcxproj -> C:\Users\igosh\source\repos\lb2\Debug\lb2.exe
