@@ -1,152 +1,36 @@
 ﻿#include <iostream>
 #include <vector>
 #include <fstream>
-//#include "Student.h"
-//#include "utils.h"
+#include "CTruba.h"
+#include "CKS.h"
+#include "Utils.h"
 
 using namespace std;
 
-struct Truba   //создание нового класса
+Truba& SelectTruba(vector <Truba>& tr)
 {
-	string name;
-	double diametr;
-	double length;
-	bool remont;
-};
-
-struct Compressor   //создание нового класса
-{
-	string name;
-	int kolvo_workshops;
-	int kolvo_workshops_in_work;
-	double efficiency;
-};
-
-
-
-Truba LoadTruba (ifstream& fin)
-{
-	Truba t;
-	fin >> t.name;
-	fin >> t.length;
-	fin >> t.diametr;
-	return t;
+	cout << "Enter index(0-" << tr.size()-1 << "): ";
+	unsigned int index = GetCorrectNumber(tr.size() - 1);
+	return tr[index];
 }
 
-Compressor LoadCompressor(ifstream& fin)
+CKS& SelecCKS(vector <CKS>& ks)
 {
-	Compressor c;
-	fin >> c.name;
-	fin >> c.kolvo_workshops;
-	fin >> c.kolvo_workshops_in_work;
-	fin >> c.efficiency;
-	return c;
+	cout << "Enter index(0-" << ks.size()-1 << "): ";
+	unsigned int index = GetCorrectNumber(ks.size() - 1); //только положиетльные числа, диапазон в два раза больше
+	return ks[index];
 }
 
-ostream& operator << (ostream& out, const Truba& t)
-{
-	out << " Name: " << t.name
-		<< "Length: " << t.length
-		<< "Diametr: " << t.diametr << endl;
-	return out;
-}
-
-istream& operator >> (istream& in, Truba& t)
-{
-	cout << "Type name: ";
-	in >> t.name;
-	cout << "Type length: ";
-	t.length = CheckNumber(t.length);
-	cout << "Type diametr: ";
-	t.diametr = CheckNumber(t.diametr);
-	return in;
-}
-
-ostream& operator << (ostream& out, const Compressor& c)
-{
-	out << " Name: " << c.name
-		<< "Number of workshops: " << c.kolvo_workshops
-		<< "Number of workshops in work: " << c.kolvo_workshops_in_work
-		<< "Efficiency: " << c.efficiency << endl;
-	return out;
-}
-
-istream& operator >> (istream& in, Compressor& c)
-{
-	cout << "Type name: ";
-	in >> c.name;
-	cout << "Type number of workshops: ";
-	c.kolvo_workshops = CheckNumber(c.kolvo_workshops);
-	cout << "Type number of workshops in work: ";
-	c.kolvo_workshops_in_work = CheckNumber(c.kolvo_workshops_in_work);
-	cout << "Type efficiency: ";
-	//if (c.efficiency>0 && c.efficiency<1)
-	c.efficiency = CheckNumber(c.efficiency);
-	return in;
-}
-
-double CheckNumber(double x)
-{
-	
-	do
-	{
-		cin.clear();
-		cin.ignore(10000, '\n');
-		cin >> x;
-	} while (cin.fail() || x < 0);
-	return x;
-}
-
-int CheckNumber(int x)
-{
-	do
-	{
-		cin.clear();
-		cin.ignore(10000, '\n');
-		cin >> x;
-	} while (cin.fail() || x < 0);
-	return x;
-}
-
-int GetCorrectNumber(int min, int max)
-{
-	int x;
-	do
-	{
-		cin.clear();
-		cin.ignore(10000, '\n');
-		cout << "Type number (" << min << "-" << max << ") :";
-		cin >> x;
-	} while (cin.fail() || x < min || x > max);
-}
-
-void SaveCompressor(ofstream& fout, const Compressor& c)
-{
-	fout << c.name << endl << c.kolvo_workshops << endl << c.kolvo_workshops_in_work << endl << c.efficiency << endl;
-}
-
-void SaveTruba(ofstream& fout, const Truba& t)
-{
-	fout << t.length << endl << t.diametr << endl;
-}
-
-//void EditStudent(Student& s)
-//{
-//	s.PassExam();
-//	/*s.score -= 0.2;
-//	s.score = IsScoreCorrect(s.score) ? s.score : 2;*/
-//
-//}
 
 void change_status(Truba& t) 
 {
-	t.Edit_pipe();
+	t.EditTruba();
 }
 
 void PrintMenu()
 {
-	cout << "1. Create pipe" << endl;
-	cout << "2. Create compressor" << endl;
+	cout << "1. Add pipe" << endl;
+	cout << "2. Add compressor" << endl;
 	cout << "3. Change pipe status" << endl;
 	cout << "4. Print pipe's info" << endl;
 	cout << "5. Print compressor's info" << endl;
@@ -154,107 +38,119 @@ void PrintMenu()
 	cout << "7. Save compressor to file" << endl;
 	cout << "8. Load pipe's info" << endl;
 	cout << "9. Load compressor's info" << endl;
-	cout << "10. Add pipe" << endl;
-	cout << "11. Add compressor" << endl;
-	cout << "13. Search for pipe by name" << endl;
-	cout << "14. Search for pipe by " << "v remonte" << " characteristic" << endl;
-	cout << "15. Search for compressor by name" << endl;
-	cout << "16. Search for compressor by percentage of non-working workshops" << endl;
-	cout << "17. Batch editing" << endl;
+	cout << "10. Delete pipe" << endl;
+	cout << "11. Delete compressor" << endl;
+	cout << "12. Search for pipe by length" << endl;
+	cout << "13. Search for pipe by characteristic: v remonte or not" << endl;
+	cout << "14. Search for compressor by name" << endl;
+	cout << "15. Search for compressor by percentage of non-working workshops" << endl;
+	cout << "16. Edit pipe" << endl;
 	cout << "0. Exit" << endl;
 	cout << "Choose action: ";
 }
 
 
-Truba& SelectTruba(vector<Truba>& p)
+template<typename T> //для ввода любого типа данных
+using FilterTR = bool(*)(const Truba& t, T param);
+
+template<typename T>
+using FilterСKS = bool(*)(const CKS& c, T param);
+
+bool CheckByLength(const Truba& t, double param)
 {
-	cout << "Enter pipe's index: ";
-	unsigned int index = GetCorrectNumber(1u, p.size());
-	return p[index - 1];
+	return t.length > param;
 }
 
-Compressor& SelectCompressor(vector<Compressor>& cs)
+bool CheckByRemont(const Truba& t, bool param)
 {
-	cout << "Enter compressor's index: ";
-	unsigned int index = GetCorrectNumber(1u, cs.size());
-	return cs[index - 1];
+	return t.remont == param;
 }
 
-//
-//vector<int> FindPipeByName(const vector<Truba>& pipes, string name = "Unknown")
+bool CheckByName(const CKS& c, string param)
+{
+	return c.name == param;
+}
+
+bool CheckByProcent(const CKS& c, double param)
+{
+	return ((c.kolvo_workshops - c.kolvo_workshops_in_work) / c.kolvo_workshops_in_work * 100) > param;
+}
+
+template<typename T>
+vector<int> FindTrubaByFilter(const vector<Truba>& pipes, FilterTR<T> f, T param)
+{
+	vector <int> rest;
+	int i = 0;
+	for (auto& t : pipes)
+	{
+		if (f(t, param))
+			rest.push_back(i);
+		i++;
+	}
+	return rest;
+}
+
+template<typename T>
+vector<int> FindCKSByFilter(const vector<CKS>& ks, FilterСKS<T> f, T param)
+{
+	vector <int> resc;
+	int i = 0;
+	for (auto& c : ks)
+	{
+		if (f(c, param))
+			resc.push_back(i);
+		i++;
+	}
+
+	return resc;
+}
+
+void deleteTR(vector <Truba>& pipes)
+{
+	cout << endl << "Type pipe's ID KS delite: " << endl;
+	int i = GetCorrectNumber(pipes.size());
+	pipes.erase(pipes.begin() + i);   //https://www.geeksforgeeks.org/vector-erase-and-clear-in-cpp/ и https://www.cplusplus.com/reference/vector/vector/erase/
+}                                     //через указатель слишком сложно делать
+
+void deleteCKS(vector <CKS>& ks)
+{
+	cout << endl << "Type KS's ID to delite: " << endl;
+	int i = GetCorrectNumber(ks.size());
+	ks.erase(ks.begin() + i);
+}
+
+//vector <Truba> EditTr(vector<Truba>& pipes, double x)
 //{
-//	vector <int> res;
+//
 //	int i = 0;
-//	for (auto& t : pipes)
+//	for (auto& tr : pipes)
 //	{
-//		if (t.name == name)
-//			res.push_back(i);
+//		
+//		if (tr.length > x)
+//		{
+//			tr.EditTruba();
+//		}
 //		i++;
 //	}
-//
-//	return res;
+//	return pipes;
 //}
-//
-//vector<int> FindCompressorByName(const vector<Compressor>& compressors, string name = "Unknown")
-//{
-//	vector <int> res;
-//	int i = 0;
-//	for (auto& c : compressors)
-//	{
-//		if (c.name == name)
-//			res.push_back(i);
-//		i++;
-//	}
-//
-//	return res;
-//}
-
-
-//
-//template<typename T>
-//using Filter = bool(*)(const Student& s, T param);
-//
-//bool CheckByName(const Student& s, string param)
-//{
-//	return s.name == param;
-//}
-//bool CheckByScore(const Student& s, double param)
-//{
-//	return s.score >= param;
-//}
-//
-//template<typename T>
-//vector<int> FindStudentsByFilter(const vector<Student>& group, Filter<T> f, T param)
-//{
-//	vector <int> res;
-//	int i = 0;
-//	for (auto& s : group)
-//	{
-//		if (f(s, param))
-//			res.push_back(i);
-//		i++;
-//	}
-//
-//	return res;
-//}
-
 
 int main()
 {
 	vector <Truba> pipes;
-	vector <Compressor> ks;
+	vector <CKS> ks;
 	
-	//vector <int> res;
+	vector <int> res;
 	int i;
-	/*double param;
-	string name;*/
+	double param;
+	string name;
 
 	while (1)
 	{
 		cout << "Select action:" << endl;
 		PrintMenu();
 		
-		switch (GetCorrectNumber(17))
+		switch (GetCorrectNumber(16))
 		{
 		case 1:
 		{
@@ -265,7 +161,7 @@ int main()
 		}
 		case 2:
 		{
-			Compressor compr;
+			CKS compr;
 			cin >> compr;
 			ks.push_back(compr);
 			break;
@@ -303,13 +199,13 @@ int main()
 		}
 		case 7:
 		{
-			Compressor comprk;
+			CKS compr;
 			ofstream fout;
 			fout.open("CS.txt", ios::out);
 			if (fout.is_open())
 			{
 				fout << ks.size() << endl;
-				for (Compressor compr : ks)
+				for (CKS compr : ks)
 					fout << compr;
 				fout.close();
 			}
@@ -333,9 +229,9 @@ int main()
 			}
 			break;
 		}
-		case 10:
+		case 9:
 		{	
-			Compressor compr;
+			CKS compr;
 			ifstream fin;
 			fin.open("CS.txt", ios::in);
 			if (fin.is_open()) 
@@ -351,6 +247,55 @@ int main()
 			}
 			break;
 		}
+		case 10:
+		{ 
+			deleteTR(pipes);
+			break;
+		}
+		case 11:
+		{
+			deleteCKS(ks);
+			break; 
+		}
+		case 12:
+		{
+			cout << "Search for pipe by length ";
+			cin >> param;
+			for (int i : FindTrubaByFilter<double>(pipes, CheckByLength, param))
+				cout << pipes[i];
+			break;
+		}
+		case 13:
+		{
+			for (int i : FindTrubaByFilter(pipes, CheckByRemont, false))
+				cout << pipes[i];
+			break;
+		}
+		case 14:
+		{
+			cout << "Search for compressor by name  ";
+			cin >> name;
+			for (int i : FindCKSByFilter<string>(ks, CheckByName, name))
+				cout << ks[i];
+			break; }
+		case 15:
+		{
+			cout << "Percentage of non-working workshops ";
+			param = GetCorrectNumber(100.0);
+			for (int i : FindCKSByFilter<double>(ks, CheckByProcent, param))
+				cout << ks[i];
+			break;
+		}
+		/*case 16:
+		{	double d;
+		cout << "Edit pipe";
+		d = GetCorrectNumber(2000.0);
+		for (int i : FindTrubaByFilter<double>(pipes, CheckByLength, d))
+		{
+			Edit(pipe, d);
+		}
+		break;
+		}*/
 		case 0:
 		{
 			return 0;

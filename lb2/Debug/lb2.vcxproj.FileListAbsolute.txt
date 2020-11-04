@@ -1,0 +1,2 @@
+C:\Users\igosh\source\repos\lb2\Debug\lb2.exe
+C:\Users\igosh\source\repos\lb2\Debug\lb2.pdb
