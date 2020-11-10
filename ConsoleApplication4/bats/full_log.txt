@@ -1,0 +1,4 @@
+Argvs in our program:  3
+Time for thread 3.txt: 0.000244s 
+Time for thread 1.txt: 0.000258s 
+Time for thread 2.txt: 0.000225s 

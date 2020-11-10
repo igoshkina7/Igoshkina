@@ -1,7 +1,4 @@
-﻿// ConsoleApplication4.cpp : Этот файл содержит функцию "main". Здесь начинается и заканчивается выполнение программы.
-//
-
-#include <iostream>
+﻿#include <iostream>
 #include <thread>
 #include <fstream>
 #include <mutex>
@@ -9,7 +6,7 @@
 #include <vector>
 
 using namespace std;
-using namespace chrono;
+
 
 void filesize(string file_name) 
 {
@@ -18,7 +15,6 @@ void filesize(string file_name)
     fin.open(file_name, ios::binary | ios::ate);
     x = fin.tellg();
     fin.close();
-    cout << "Razmer " << file_name << " : " << x << " byte" << endl;
 }
 
 
@@ -26,7 +22,7 @@ void thread_f (string file_name, vector<int>& vec, mutex& m1, mutex& m2, mutex& 
 {
 	ifstream fin;
 	int x;
-	auto start = system_clock::now();
+	auto start = chrono::system_clock::now();
 	fin.open(file_name, ios::in);
 	if (fin.is_open())  //считываем файл
 	{   
@@ -39,9 +35,9 @@ void thread_f (string file_name, vector<int>& vec, mutex& m1, mutex& m2, mutex& 
 		fin.close();
 	}
 
-	m2.lock();  //захватываем мьютекс на время поиска максимума
+	m2.lock();  //захватываем мьютекс на время поиска минимума
 	int min = vec[0];
-	for (int i = 1; i < vec.size(); i++)  //нахождение максимума 
+	for (int i = 1; i < vec.size(); i++)  //нахождение минимума 
 	{
 		if (vec[i] <= min) 
 			min = vec[i];
@@ -49,11 +45,10 @@ void thread_f (string file_name, vector<int>& vec, mutex& m1, mutex& m2, mutex& 
 	}
 	m2.unlock(); // теперь другой поток может выполнять прошлую часть кода
 
-	auto end = system_clock::now();
-	duration<double> sec = end - start;
+	auto end = chrono:: system_clock::now();
+	chrono::duration<double> sec = end - start;
 	m3.lock(); // захват мьютекса перед выводом в консоль, чтобы информация не смешивалась
-	cout << "Work time: " << sec.count() << " sec " << endl;
-	cout << "Min: " << min << endl;
+	cout << "Time for thread " + file_name + ": " << sec.count() << " sec " << endl;
 	filesize(file_name);
 	m3.unlock(); // теперь другой поток может записать в консоль
 }
@@ -64,17 +59,20 @@ int main(int argc, char* argv[])
 	mutex m1;
 	mutex m2;
 	mutex m3;
-	if (argc == 2) {
+	if (argc == 2) 
+	{
 		thread ta(thread_f, argv[1], ref(vec), ref(m1), ref(m2), ref(m3));
 		ta.join();
 	}
-	else if (argc == 3) {
+	else if (argc == 3) 
+	{
 		thread ta(thread_f, argv[1], ref(vec), ref(m1), ref(m2), ref(m3));
 		thread tb(thread_f, argv[2], ref(vec), ref(m1), ref(m2), ref(m3));
 		ta.join();
 		tb.join();
 	}
-	else if (argc == 4) {
+	else if (argc == 4) 
+	{
 		thread ta(thread_f, argv[1], ref(vec), ref(m1), ref(m2), ref(m3));
 		thread tb(thread_f, argv[2], ref(vec), ref(m1), ref(m2), ref(m3));
 		thread tc(thread_f, argv[3], ref(vec), ref(m1), ref(m2), ref(m3));
@@ -88,15 +86,3 @@ int main(int argc, char* argv[])
 }
 
 
-
-
-// Запуск программы: CTRL+F5 или меню "Отладка" > "Запуск без отладки"
-// Отладка программы: F5 или меню "Отладка" > "Запустить отладку"
-
-// Советы по началу работы 
-//   1. В окне обозревателя решений можно добавлять файлы и управлять ими.
-//   2. В окне Team Explorer можно подключиться к системе управления версиями.
-//   3. В окне "Выходные данные" можно просматривать выходные данные сборки и другие сообщения.
-//   4. В окне "Список ошибок" можно просматривать ошибки.
-//   5. Последовательно выберите пункты меню "Проект" > "Добавить новый элемент", чтобы создать файлы кода, или "Проект" > "Добавить существующий элемент", чтобы добавить в проект существующие файлы кода.
-//   6. Чтобы снова открыть этот проект позже, выберите пункты меню "Файл" > "Открыть" > "Проект" и выберите SLN-файл.
