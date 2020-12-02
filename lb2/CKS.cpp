@@ -54,7 +54,7 @@ CKS::CKS()
 	this->efficiency = GetCorrectNumber(10.0);
 }
 
-int CKS::set_id() const
+int CKS::get_id() const
 {
 	int id_value = id;
 	return id_value;

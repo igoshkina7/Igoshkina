@@ -1,7 +1,4 @@
-﻿  CKS.cpp
-  CTruba.cpp
-C:\Users\igosh\source\repos\lb2\CTruba.cpp(71,14): warning C4244: инициализация: преобразование "const double" в "int", возможна потеря данных
-  lb2.cpp
-C:\Users\igosh\source\repos\lb2\lb2.cpp(281,61): warning C4390: ";": обнаружен пустой контролируемый оператор; это правильно?
-  Создание кода...
+﻿  lb2.cpp
+C:\Users\igosh\source\repos\lb2\lb2.cpp(69,102): warning C4390: ";": обнаружен пустой контролируемый оператор; это правильно?
+C:\Users\igosh\source\repos\lb2\lb2.cpp(290,61): warning C4390: ";": обнаружен пустой контролируемый оператор; это правильно?
   lb2.vcxproj -> C:\Users\igosh\source\repos\lb2\Debug\lb2.exe

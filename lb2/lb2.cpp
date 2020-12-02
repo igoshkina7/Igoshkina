@@ -15,7 +15,7 @@ void change_status(Truba& t)
 
 void change_workshops(CKS& ks)
 {
-	cout << "Kolvo workshops in work: " << endl;
+	cout << "Kolvo workshops in work (0-"<< ks.kolvo_workshops<<"):" << endl;
 	ks.kolvo_workshops_in_work = GetCorrectIndex(ks.kolvo_workshops);
 }
 
@@ -49,7 +49,7 @@ using FilterСKS = bool(*)(const CKS& c, T param);
 
 bool CheckByLength(const Truba& t, double param)
 {
-	return t.set_length() == param;
+	return t.get_length() == param;
 }
 
 bool CheckByRemont(const Truba& t, bool param)
@@ -66,6 +66,8 @@ bool CheckByProcent(const CKS& c, double param)
 {
 	double k;
 	k = 100 * (c.kolvo_workshops - c.kolvo_workshops_in_work) / c.kolvo_workshops;
+	if (((c.kolvo_workshops - c.kolvo_workshops_in_work) % c.kolvo_workshops) > (c.kolvo_workshops / 2));
+	     k++;
 	return  (k) == param;
 }
 
@@ -124,14 +126,14 @@ vector<int> FindCKSByFilter(const unordered_map<int, CKS>& ks, FilterСKS<T> f, 
 		case 3:
 		{
 			cout << "Enter index(1-" << mapTruba.size() << "): ";
-			unsigned int index = GetCorrectIndex(mapTruba.size());
+			unsigned int index = GetCorrectIndex(FindMaxID(mapTruba));
 			change_status(mapTruba[index]);
 			break;
 		}
 		case 4:
 		{
 			cout << "Enter index(1-" << mapCKS.size() << "): ";
-			unsigned int index = GetCorrectIndex(mapCKS.size());
+			unsigned int index = GetCorrectIndex(FindMaxID(mapCKS));
 			change_workshops(mapCKS[index]);
 			break;
 		}
@@ -151,12 +153,15 @@ vector<int> FindCKSByFilter(const unordered_map<int, CKS>& ks, FilterСKS<T> f, 
 		case 7:
 		{
 			ofstream fout;
-			fout.open("Truba.txt", ios::out);
+			string filename;
+			cout << "Enter file's name";
+			cin >> filename;
+			fout.open(filename + ".txt", fstream::out);
 			if (fout.is_open())
 			{
-				for (auto it = mapTruba.begin(); it != mapTruba.end(); ++it)
+				for (auto it: mapTruba)
 				{
-					fout << it->second << endl;
+					fout << it.second << endl;
 				}
 				fout.close();
 			}
@@ -165,12 +170,15 @@ vector<int> FindCKSByFilter(const unordered_map<int, CKS>& ks, FilterСKS<T> f, 
 		case 8:
 		{
 			ofstream fout;
-			fout.open("CS.txt", ios::out);
+			string filename;
+			cout << "Enter file's name";
+			cin >> filename;
+			fout.open(filename + ".txt", fstream::out);
 			if (fout.is_open())
 			{
-				for (auto ic = mapCKS.begin(); ic != mapCKS.end(); ++ic)
+				for (auto ic: mapCKS)
 				{
-					fout << ic->second << endl;
+					fout << ic.second << endl;
 				}
 				fout.close();
 			}
@@ -181,12 +189,15 @@ vector<int> FindCKSByFilter(const unordered_map<int, CKS>& ks, FilterСKS<T> f, 
 		{	
 			fstream fin;
 			unordered_map<int, Truba> pipe2;
-			fin.open("Truba.txt", fstream::in);
+			string filename;
+			cout << "Enter file's name";
+			cin >> filename;
+			fin.open(filename + ".txt", fstream::in);
 			if (fin.is_open()) {
 				while (!fin.eof())
 				{
 					Truba p(fin);
-					pipe2.insert(pair<int, Truba>(p.set_id(), p));
+					pipe2.insert(pair<int, Truba>(p.get_id(), p));
 				}
 				fin.close();
 				mapTruba = pipe2;
@@ -199,12 +210,15 @@ vector<int> FindCKSByFilter(const unordered_map<int, CKS>& ks, FilterСKS<T> f, 
 		{
 			fstream fin;
 			unordered_map<int, CKS> ks2;
-			fin.open("CKS.txt", fstream::in);
+			string filename;
+			cout << "Enter file's name";
+			cin >> filename;
+			fin.open(filename + ".txt", fstream::in);
 			if (fin.is_open()) {
 				while (!fin.eof())
 				{
 					CKS k(fin);
-					ks2.insert(pair<int, CKS>(k.set_id(), k));
+					ks2.insert(pair<int, CKS>(k.get_id(), k));
 				}
 				fin.close();
 				mapCKS = ks2;
@@ -216,7 +230,7 @@ vector<int> FindCKSByFilter(const unordered_map<int, CKS>& ks, FilterСKS<T> f, 
 		{
 			unordered_map <int, Truba>::iterator iter ;
 			cout << endl << "ID Pipe to delite: (1-" << mapTruba.size() <<")";
-			int id = GetCorrectNumber(1000);
+			int id = GetCorrectNumber(FindMaxID(mapTruba));
 			iter=mapTruba.find(id);
 			mapTruba.erase(iter);
 			break;
@@ -224,8 +238,8 @@ vector<int> FindCKSByFilter(const unordered_map<int, CKS>& ks, FilterСKS<T> f, 
 		case 12:
 		{
 			unordered_map <int, CKS>::iterator iter;
-			cout << endl << "ID KS to delite: (1-" << mapCKS.size() << ")";
-			int id = GetCorrectNumber(1000);
+			cout << endl << "ID KS to delete: (1-" << mapCKS.size() << ")";
+			int id = GetCorrectNumber(FindMaxID(mapCKS));
 			iter = mapCKS.find(id);
 			mapCKS.erase(iter);
 			break;

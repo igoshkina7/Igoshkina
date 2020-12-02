@@ -22,6 +22,6 @@ public:
 	Truba();
 	Truba(std::fstream& fin);
 	void EditTrubaTrue();
-	int set_id() const;
-	int set_length() const;
+	int get_id() const;
+	int get_length() const;
 };

@@ -60,15 +60,13 @@ void Truba::EditTrubaTrue()
 }
 
 
-int Truba::set_id() const
+int Truba::get_id() const
 {
-	int id_value = id;
-	return id_value;
+	return id;
 }
 
-int Truba::set_length() const
+int Truba::get_length() const
 {
-	int length_value = length;
-	return length_value;
+	return length;
 }
 

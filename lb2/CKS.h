@@ -21,6 +21,6 @@ public:
 	static int IDC;
 	CKS();
 	CKS(fstream& fin);
-	int set_id() const;
+	int get_id() const;
 };
 

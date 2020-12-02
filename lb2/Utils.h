@@ -34,8 +34,8 @@ int FindMaxID(const unordered_map<int, T>& t)
 {
 	int MaxID = -100;
 	for (const auto& i : t)
-		if (i.second.set_id() > MaxID)
-			MaxID = i.second.set_id();
+		if (i.second.get_id() > MaxID)
+			MaxID = i.second.get_id();
 	return MaxID;
 }
 
