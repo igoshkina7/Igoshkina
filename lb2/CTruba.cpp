@@ -1,5 +1,6 @@
 #include "CTruba.h"
 #include "Utils.h"
+#include <fstream>
 
 using namespace std;
 
@@ -34,24 +35,40 @@ ofstream& operator<<(ofstream& fout, const Truba& tr)
 	return fout;
 }
 
-ifstream& operator>>(ifstream& fin, Truba& tr)
+Truba::Truba(fstream& fin)
 {
-	fin >> tr.id >> tr.name >> tr.diametr >> tr.length >> tr.remont;
-	return fin;
+	fin >> this->id >> this->name >> this->diametr >> this->length >> this->remont;
 }
 
 int Truba::IDT = 0; //объ€вл€ем переменную, чтобы не присвоились другие значени€
 Truba::Truba()
 {
-	id = IDT++;
+	this->id = ++IDT;
+	cout << "Name: " << endl;
+	cin.ignore(10000, '\n');
+	getline(cin, this->name);
+	cout << "Length: " << endl;
+	this->length = GetCorrectNumber(1000.0);
+	cout << "Diametr: " << endl;
+	this->diametr = GetCorrectNumber(2000.0);
+	this->remont = false;
 }
 
 void Truba::EditTrubaTrue()
 {
-	remont = 1;
+	this->remont = true;
 }
 
-void Truba::EditTrubaFalse()
+
+int Truba::set_id() const
 {
-	remont = 0;
+	int id_value = id;
+	return id_value;
 }
+
+int Truba::set_length() const
+{
+	int length_value = length;
+	return length_value;
+}
+

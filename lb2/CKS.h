@@ -10,7 +10,7 @@ class CKS
 	friend istream& operator >> (istream& in, CKS& new_ks);
 	friend ostream& operator << (ostream& out, const CKS& k);
 	friend ofstream& operator << (ofstream& out, const CKS& k);
-	friend ifstream& operator >> (ifstream& in, CKS& new_ks);
+	friend fstream& operator >> (fstream& in, CKS& k);
 
 	int id;
 public:
@@ -20,5 +20,7 @@ public:
 	double efficiency;
 	static int IDC;
 	CKS();
+	CKS(fstream& fin);
+	int set_id() const;
 };
 
