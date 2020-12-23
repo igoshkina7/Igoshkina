@@ -5,13 +5,10 @@
 #include "CKS.h"
 #include "Utils.h"
 #include <unordered_map>
+#include <unordered_set>
+#include"Graphwork.h"
 
 using namespace std;
-
-void change_status(Truba& t)
-{
-	t.remont = !t.remont;
-}
 
 void change_workshops(CKS& ks)
 {
@@ -38,6 +35,10 @@ void PrintMenu()
 	cout << "15. Search for compressor by name" << endl;
 	cout << "16. Search for compressor by percentage of non-working workshops" << endl;
 	cout << "17. Edit pipe" << endl;
+	cout << "18. Create Graph" << endl;
+	cout << "19. Print Graph" << endl;
+	cout << "20. Topologicheskaya sortirovka" << endl;
+	cout << "21. Maximal potok" << endl;
 	cout << "0. Exit" << endl;
 	cout << "Choose action: ";
 }
@@ -54,7 +55,7 @@ bool CheckByLength(const Truba& t, double param)
 
 bool CheckByRemont(const Truba& t, bool param)
 {
-	return t.remont == param;
+	return t.get_remont() == param;
 }
 
 bool CheckByName(const CKS& c, string param)
@@ -66,7 +67,7 @@ bool CheckByProcent(const CKS& c, double param)
 {
 	double k;
 	k = 100 * (c.kolvo_workshops - c.kolvo_workshops_in_work) / c.kolvo_workshops;
-	if (((c.kolvo_workshops - c.kolvo_workshops_in_work) % c.kolvo_workshops) > (c.kolvo_workshops / 2));
+	if (((c.kolvo_workshops - c.kolvo_workshops_in_work) % c.kolvo_workshops) > (c.kolvo_workshops / 2))
 	     k++;
 	return  (k) == param;
 }
@@ -98,19 +99,33 @@ vector<int> FindCKSByFilter(const unordered_map<int, CKS>& ks, FilterСKS<T> f, 
 	return res_c;
 }
 
+int GetIDKS(const unordered_map<int, CKS>& kss)
+{
+	unordered_map <int, CKS> ::iterator id;
+	int i;
+	while ((cin >> i).fail() || (kss.find(i) == kss.end()))
+	{
+		cin.clear();
+		cin.ignore(10000, '\n');
+		cout << "KS with this ID is not found. Return: ";
+	}
+	return i;
+}
+
 	int main()
 {
 	
 	unordered_map <int, Truba> mapTruba;
 	unordered_map <int, CKS> mapCKS;
-	
+	unordered_map<int, vector<id_in_pipe>> graph;
+	unordered_set<int>idks;
 
 	while (1)
 	{
 		cout << "Select action:" << endl;
 		PrintMenu();
 		
-		switch (GetCorrectIndex(17))
+		switch (GetCorrectIndex(21))
 		{
 		case 1:
 		{
@@ -125,9 +140,11 @@ vector<int> FindCKSByFilter(const unordered_map<int, CKS>& ks, FilterСKS<T> f, 
 		}
 		case 3:
 		{
+			unordered_map <int, Truba> ::iterator n;
 			cout << "Enter index(1-" << mapTruba.size() << "): ";
 			unsigned int index = GetCorrectIndex(FindMaxID(mapTruba));
-			change_status(mapTruba[index]);
+			n = mapTruba.find(index);
+			n->second.EditTruba();
 			break;
 		}
 		case 4:
@@ -287,10 +304,56 @@ vector<int> FindCKSByFilter(const unordered_map<int, CKS>& ks, FilterСKS<T> f, 
 			y = GetCorrectNumber(2000.0);
 			for (int i : FindTrubaByFilter<double>(mapTruba, CheckByLength, x))
 			{
-				if (mapTruba[i].length == x && mapTruba[i].diametr == y);
-				            mapTruba[i].EditTrubaTrue();
+				if (mapTruba[i].get_length() == x && mapTruba[i].get_diameter() == y)
+				            mapTruba[i].EditTruba();
 			}
 		break;
+		}
+		case 18:
+		{
+
+			unordered_map <int, Truba> ::iterator n;
+			int id_out;
+			int id_in;
+			cout << "Truba ID, which connected KSs: ";
+			int index = GetCorrectNumber(Truba::IDT);
+			n = mapTruba.find(index);
+			if (n == mapTruba.end() || (n->second.get_id_out() != 0))
+				cout << "Truba with this ID is not found or used\n";
+			else
+			{
+				cout << "Truba out (KS ID): ";
+				id_out = GetIDKS(mapCKS);
+				cout << "Truba in (KS ID): ";
+				id_in = GetIDKS(mapCKS);
+				n->second.Truba_in_out(id_out, id_in);
+			}
+			break;
+		}
+		case 19:
+		{
+			graph = Graph(graph, mapCKS, mapTruba, idks);
+			PrintGraph(graph);
+			break;
+		}
+		case 20:
+		{
+			graph = Graph(graph, mapCKS, mapTruba, idks);
+			PrintGraph(graph);
+			vector<int> ans;
+			topol_sort(graph, ans);
+			for (auto index = ans.begin(); index != ans.end(); index++)
+			{
+				cout << *index;
+				if (index + 1 != ans.end()) cout << " > ";
+			}
+			break;
+		}
+		case 21:
+		{
+			graph = Graph(graph, mapCKS, mapTruba, idks);
+			Potok(graph, mapCKS, mapTruba, idks);
+			break;
 		}
 		case 0:
 		{

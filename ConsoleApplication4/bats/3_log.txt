@@ -1,2 +1,0 @@
-Argvs in our program:  1
-Time for thread 3.txt: 0.000142s 
