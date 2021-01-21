@@ -1,5 +1,7 @@
 ﻿#include <iostream>
 #include <vector>
+//#include<string>
+//#include<iterator>
 #include <fstream>
 #include "CTruba.h"
 #include "CKS.h"
@@ -24,21 +26,20 @@ void PrintMenu()
 	cout << "4. Change number workshops in work" << endl;
 	cout << "5. Print pipe's info" << endl;
 	cout << "6. Print compressor's info" << endl;
-	cout << "7. Save pipe to file" << endl;
-	cout << "8. Save compressor to file" << endl;
-	cout << "9. Load pipe's info" << endl;
-	cout << "10. Load compressor's info" << endl;
-	cout << "11. Delete pipe" << endl;
-	cout << "12. Delete compressor" << endl;
-	cout << "13. Search for pipe by length" << endl;
-	cout << "14. Search for pipe by characteristic: v remonte or not" << endl;
-	cout << "15. Search for compressor by name" << endl;
-	cout << "16. Search for compressor by percentage of non-working workshops" << endl;
-	cout << "17. Edit pipe" << endl;
-	cout << "18. Create Graph" << endl;
-	cout << "19. Print Graph" << endl;
-	cout << "20. Topologicheskaya sortirovka" << endl;
-	cout << "21. Maximal potok" << endl;
+	cout << "7. Save data to file" << endl;
+	cout << "8. Load data" << endl;
+	cout << "9. Delete pipe" << endl;
+	cout << "10. Delete compressor" << endl;
+	cout << "11. Search for pipe by length" << endl;
+	cout << "12. Search for pipe by characteristic: v remonte or not" << endl;
+	cout << "13. Search for compressor by name" << endl;
+	cout << "14. Search for compressor by percentage of non-working workshops" << endl;
+	cout << "15. Edit pipe" << endl;
+	cout << "16. Create Graph" << endl;
+	cout << "17. Print Graph" << endl;
+	cout << "28. Topologicheskaya sortirovka" << endl;
+	cout << "19. Maximal potok" << endl;
+	cout << "20. Kratchayshiy puti" << endl;
 	cout << "0. Exit" << endl;
 	cout << "Choose action: ";
 }
@@ -72,6 +73,15 @@ bool CheckByProcent(const CKS& c, double param)
 	return  (k) == param;
 }
 
+bool CheckByID_in(const Truba& t, int param)
+{
+	return t.get_id_in() == param;
+}
+bool CheckByID_out(const Truba& t, int param)
+{
+	return t.get_id_out() == param;
+}
+
 template<typename T>
 vector<int> FindTrubaByFilter(const unordered_map<int, Truba>& pipes, FilterTR<T> f, T param)
 {
@@ -99,15 +109,15 @@ vector<int> FindCKSByFilter(const unordered_map<int, CKS>& ks, FilterСKS<T> f, 
 	return res_c;
 }
 
-int GetIDKS(const unordered_map<int, CKS>& kss)
+int GetIDKS(const unordered_map<int, CKS>& mapCKS)
 {
 	unordered_map <int, CKS> ::iterator id;
 	int i;
-	while ((cin >> i).fail() || (kss.find(i) == kss.end()))
+	while ((cin >> i).fail() || (mapCKS.find(i) == mapCKS.end()))
 	{
 		cin.clear();
 		cin.ignore(10000, '\n');
-		cout << "KS with this ID is not found. Return: ";
+		cout << "KS with this ID is not found. Type again: ";
 	}
 	return i;
 }
@@ -118,14 +128,14 @@ int GetIDKS(const unordered_map<int, CKS>& kss)
 	unordered_map <int, Truba> mapTruba;
 	unordered_map <int, CKS> mapCKS;
 	unordered_map<int, vector<id_in_pipe>> graph;
-	unordered_set<int>idks;
+	unordered_set<int> id_KS;
 
 	while (1)
 	{
 		cout << "Select action:" << endl;
 		PrintMenu();
 		
-		switch (GetCorrectIndex(21))
+		switch (GetCorrectIndex(22))
 		{
 		case 1:
 		{
@@ -169,81 +179,15 @@ int GetIDKS(const unordered_map<int, CKS>& kss)
 
 		case 7:
 		{
-			ofstream fout;
-			string filename;
-			cout << "Enter file's name";
-			cin >> filename;
-			fout.open(filename + ".txt", fstream::out);
-			if (fout.is_open())
-			{
-				for (auto it: mapTruba)
-				{
-					fout << it.second << endl;
-				}
-				fout.close();
-			}
-			break;
+			if (mapTruba.size() != 0 || mapCKS.size() != 0)
+				SaveData(mapTruba, mapCKS);
 		}
 		case 8:
 		{
-			ofstream fout;
-			string filename;
-			cout << "Enter file's name";
-			cin >> filename;
-			fout.open(filename + ".txt", fstream::out);
-			if (fout.is_open())
-			{
-				for (auto ic: mapCKS)
-				{
-					fout << ic.second << endl;
-				}
-				fout.close();
-			}
-			break;
+			LoadData(mapTruba, mapCKS);
 		}
 		
 		case 9:
-		{	
-			fstream fin;
-			unordered_map<int, Truba> pipe2;
-			string filename;
-			cout << "Enter file's name";
-			cin >> filename;
-			fin.open(filename + ".txt", fstream::in);
-			if (fin.is_open()) {
-				while (!fin.eof())
-				{
-					Truba p(fin);
-					pipe2.insert(pair<int, Truba>(p.get_id(), p));
-				}
-				fin.close();
-				mapTruba = pipe2;
-				Truba::IDT = FindMaxID(mapTruba);
-			}
-			break;
-		}
-
-		case 10:
-		{
-			fstream fin;
-			unordered_map<int, CKS> ks2;
-			string filename;
-			cout << "Enter file's name";
-			cin >> filename;
-			fin.open(filename + ".txt", fstream::in);
-			if (fin.is_open()) {
-				while (!fin.eof())
-				{
-					CKS k(fin);
-					ks2.insert(pair<int, CKS>(k.get_id(), k));
-				}
-				fin.close();
-				mapCKS = ks2;
-				CKS::IDC = FindMaxID(mapCKS);
-			}
-			break;
-		}
-		case 11:
 		{
 			unordered_map <int, Truba>::iterator iter ;
 			cout << endl << "ID Pipe to delite: (1-" << mapTruba.size() <<")";
@@ -252,16 +196,20 @@ int GetIDKS(const unordered_map<int, CKS>& kss)
 			mapTruba.erase(iter);
 			break;
 		}
-		case 12:
+		case 10:
 		{
 			unordered_map <int, CKS>::iterator iter;
 			cout << endl << "ID KS to delete: (1-" << mapCKS.size() << ")";
 			int id = GetCorrectNumber(FindMaxID(mapCKS));
 			iter = mapCKS.find(id);
 			mapCKS.erase(iter);
+			for (int& i : FindTrubaByFilter<int>(mapTruba, CheckByID_in, id))
+					mapTruba.erase(i);
+			for (int& i : FindTrubaByFilter<int>(mapTruba, CheckByID_out, id))
+				mapTruba.erase(i);
 			break;
 		}
-		case 13:
+		case 11:
 		{
 			double param;
 			cout << "Search for pipe by length ";
@@ -270,14 +218,14 @@ int GetIDKS(const unordered_map<int, CKS>& kss)
 				cout << mapTruba[i];
 			break;
 		}
-		case 14:
+		case 12:
 		{
 			cout << "Type status: ";
 			for (int i : FindTrubaByFilter(mapTruba, CheckByRemont, true))
 				cout << mapTruba[i];
 			break;
 		}
-		case 15:
+		case 13:
 		{
 			string name;
 			cout << "Search for compressor by name  ";
@@ -286,7 +234,7 @@ int GetIDKS(const unordered_map<int, CKS>& kss)
 				cout << mapCKS[i];
 			break; 
 		}
-		case 16:
+		case 14:
 		{
 			double param;
 			cout << "Percentage of non-working workshops ";
@@ -295,7 +243,7 @@ int GetIDKS(const unordered_map<int, CKS>& kss)
 				cout << mapCKS[i];
 			break;
 		}
-		case 17:
+		case 15:
 		{
 			double x, y;
 			cout << "Edit pipe's lenght :";
@@ -309,7 +257,7 @@ int GetIDKS(const unordered_map<int, CKS>& kss)
 			}
 		break;
 		}
-		case 18:
+		case 16:
 		{
 
 			unordered_map <int, Truba> ::iterator n;
@@ -330,15 +278,15 @@ int GetIDKS(const unordered_map<int, CKS>& kss)
 			}
 			break;
 		}
-		case 19:
+		case 17:
 		{
-			graph = Graph(graph, mapCKS, mapTruba, idks);
+			graph = Graph(graph, mapCKS, mapTruba, id_KS);
 			PrintGraph(graph);
 			break;
 		}
-		case 20:
+		case 18:
 		{
-			graph = Graph(graph, mapCKS, mapTruba, idks);
+			graph = Graph(graph, mapCKS, mapTruba, id_KS);
 			PrintGraph(graph);
 			vector<int> ans;
 			topol_sort(graph, ans);
@@ -351,8 +299,14 @@ int GetIDKS(const unordered_map<int, CKS>& kss)
 		}
 		case 21:
 		{
-			graph = Graph(graph, mapCKS, mapTruba, idks);
-			Potok(graph, mapCKS, mapTruba, idks);
+			graph = Graph(graph, mapCKS, mapTruba, id_KS);
+			Potok(graph, mapCKS, mapTruba, id_KS);
+			break;
+		}
+		case 22:
+		{
+			graph = Graph(graph, mapCKS, mapTruba, id_KS);
+			Puti(graph, mapCKS, mapTruba, id_KS);
 			break;
 		}
 		case 0:

@@ -37,7 +37,7 @@ ofstream& operator<<(ofstream& fout, const Truba& tr)
 
 Truba::Truba(fstream& fin)
 {
-	fin >> this->id >> this->name >> this->diameter >> this->length >> this->remont >> this->id_out >> this->id_in;
+	fin >> this->id >> this->name >> this->diameter >> this->length >> this->remont;// >> this->id_out >> this->id_in;
 }
 
 int Truba::IDT = 0; //объ€вл€ем переменную, чтобы не присвоились другие значени€

@@ -1,2 +1,7 @@
-﻿  CTruba.cpp
+﻿  lb2.cpp
+C:\Users\igosh\source\repos\lb2\Graphwork.h(48,13): warning C4305: =: усечение из "int" в "bool"
+C:\Users\igosh\source\repos\lb2\Graphwork.h(226,20): warning C4018: <: несоответствие типов со знаком и без знака
+C:\Users\igosh\source\repos\lb2\Graphwork.h(244,21): warning C4018: <: несоответствие типов со знаком и без знака
+C:\Users\igosh\source\repos\lb2\Graphwork.h(279,29): warning C4244: =: преобразование "double" в "int", возможна потеря данных
+C:\Users\igosh\source\repos\lb2\Graphwork.h(309,22): warning C4018: <: несоответствие типов со знаком и без знака
   lb2.vcxproj -> C:\Users\igosh\source\repos\lb2\Debug\lb2.exe

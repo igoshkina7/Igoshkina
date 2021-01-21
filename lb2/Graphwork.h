@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include<iostream>
 #include<fstream>
 #include<unordered_map>
@@ -22,29 +22,30 @@ id_in_pipe createStruct(int& id, int& id_in)
 	return new_pair;
 }
 
-bool dfspr(int v, unordered_map<int, vector<id_in_pipe>>& gr, unordered_map<int, char> cl, unordered_map<int, int> p, int& cycle_st, vector<int>& ans) 
+bool dfspr(int v, unordered_map<int, vector<id_in_pipe>>& gr, unordered_map<int, bool> used, unordered_map<int, int> p, int& cycle_st, vector<int>& ans) 
 {
-	cl[v] = 1;
-	vector<id_in_pipe> vec;
-	vec = gr[v];
+	 used[v] = true;
+	vector<id_in_pipe> maxv;
+	maxv = gr[v];
 
-	for (auto& i : vec) 
+	for (auto& i : maxv) 
 	{
 		int to = i.id_in;
-		if (cl[to] == 0)
+		if (!used[to])
 		{
 			p[to] = v;
-			if (dfspr(to, gr, cl, p, cycle_st, ans))
+			if (dfspr(to, gr, used, p, cycle_st, ans))
 				return true;
 		}
-		else if (cl[to] == 1)
+		else if (used[to] == true)
 		{
 			cycle_st = to;
 			return true;
 		}
 
 	}
-	cl[v] = 2;
+	ans.push_back(v);
+	used[v] = 2;
 	int k = 0;
 	int n = ans.size();
 	for (int j = 0; j < n; j++)
@@ -55,19 +56,20 @@ bool dfspr(int v, unordered_map<int, vector<id_in_pipe>>& gr, unordered_map<int,
 
 }
 
-void topol_sort(unordered_map<int, vector<id_in_pipe>>& gr, vector<int>& ans) {
+void topol_sort(unordered_map<int, vector<id_in_pipe>>& gr, vector<int>& ans) 
+{
 	ans.clear();
-	unordered_map<int, char> cl;
+	unordered_map<int, bool> used;
 	unordered_map<int, int> p;
 	for (auto& i : gr)
 	{
-		cl[i.first] = false;
+		used[i.first] = false;
 		p[i.first] = -1;
 	}
 	int cycle_st = -1;
-	for (auto& el : cl)
+	for (auto& el : used)
 	{
-		if (dfspr(el.first, gr, cl, p, cycle_st, ans))
+		if (dfspr(el.first, gr, used, p, cycle_st, ans))
 			break;
 	}
 
@@ -77,11 +79,11 @@ void topol_sort(unordered_map<int, vector<id_in_pipe>>& gr, vector<int>& ans) {
 }
 
 
-unordered_map<int, vector<id_in_pipe>> Graph(unordered_map<int, vector<id_in_pipe>>& graph, unordered_map <int, CKS>& kss, unordered_map <int, Truba>& pipe, unordered_set<int>idks)
+unordered_map<int, vector<id_in_pipe>> Graph(unordered_map<int, vector<id_in_pipe>>& graph, unordered_map <int, CKS>& mapKS, unordered_map <int, Truba>& mapTruba, unordered_set<int>id_ks)
 {
 	graph.clear();
-	if (pipe.size() != 0)
-		for (auto it = pipe.begin(); it != pipe.end(); ++it)
+	if (mapTruba.size() != 0)
+		for (auto it = mapTruba.begin(); it != mapTruba.end(); ++it)
 		{
 			if (it->second.get_id_in() != 0 && it->second.get_remont() == false)
 			{
@@ -89,8 +91,8 @@ unordered_map<int, vector<id_in_pipe>> Graph(unordered_map<int, vector<id_in_pip
 				int id_in = it->second.get_id_in();
 				int id_out = it->second.get_id_out();
 				graph[id_out].push_back(createStruct(id, id_in));
-				idks.insert(id_in);
-				idks.insert(id_out);
+				id_ks.insert(id_in);
+				id_ks.insert(id_out);
 			}
 		}
 	return graph;
@@ -113,6 +115,8 @@ void PrintGraph(T graph)
 }
 
 
+
+
 void addEdge(int u, int v, int cap, int onEnd[100], int& edgeCount, int nextEdge[100], int firstEdge[100], int capacity[100])
 {
 	
@@ -128,15 +132,14 @@ void addEdge(int u, int v, int cap, int onEnd[100], int& edgeCount, int nextEdge
 	capacity[edgeCount++] = 0;				
 }
 
-int findFlow(int u, int flow, int destinationVertex, int visited[100], int firstEdge[100], int nextEdge[100], int onEnd[100], int capacity[100]) {
+int findFlow(int u, int flow, int destinationVertex, int* visited, int* firstEdge, int* nextEdge, int* onEnd, int* capacity) {
 	if (u == destinationVertex) return flow; 
 	visited[u] = true;
 	for (int edge = firstEdge[u]; edge != 0; edge = nextEdge[edge]) {
 		int to = onEnd[edge];
 		if (!visited[to] && capacity[edge] > 0) {
-			int minResult = findFlow(to, min(flow, capacity[edge]), destinationVertex, visited, firstEdge, nextEdge, onEnd, capacity); // euai iioie a iiaaa?aaa
-			if (minResult > 0) 
-			{                    
+			int minResult = findFlow(to, min(flow, capacity[edge]), destinationVertex, visited, firstEdge, nextEdge, onEnd, capacity); 
+			if (minResult > 0) {                    
 				capacity[edge] -= minResult;   
 				//capacity[edge ^ 1] += minResult;   
 				return minResult;
@@ -145,6 +148,7 @@ int findFlow(int u, int flow, int destinationVertex, int visited[100], int first
 	}
 	return 0; 
 }
+
 void Potok(unordered_map<int, vector<id_in_pipe>>& graph, unordered_map <int, CKS>& kss, unordered_map <int, Truba>& pipe, unordered_set<int>idks)
 {
 	size_t n = pipe.size();
@@ -178,7 +182,7 @@ void Potok(unordered_map<int, vector<id_in_pipe>>& graph, unordered_map <int, CK
 	{
 		for (auto it = pipe.begin(); it != pipe.end(); ++it) {
 			int u, v, cap;
-			if (it->second.get_id_in() != 0)
+			if (it->second.get_id_in() != 0 && it->second.get_remont() == false)
 			{
 				u = it->second.get_id_out();
 				v = it->second.get_id_in();
@@ -220,132 +224,92 @@ item CreateItem(int s, int c, int v)
 int find(int s, int c, vector<item>map) 
 { 
 	for (int i = 0; i < map.size(); i++)
-		if (map[i].s == s && map[i].c == c ||
-			map[i].s == c && map[i].c == s) return map[i].v;
+		if (map[i].s == s && map[i].c == c) return map[i].v;
 	return 0;
 }
 
-void step(int s, int f, int p, vector<item>map, bool found, int len, int c_len, int waylen, int way[100], int road[100], int n, bool incl[100]) { //?aeo?neaiue iiene oaaa iooe
-	int c; 
+
+void step(int s, int f, int p, vector<item>map, bool& found, int& len, int c_len, int waylen, vector<int>& way, vector<int>road, int n, vector<bool>incl) 
+{ 
 	if (s == f)  
 	{
+		way.clear();
 		found = true; 
-		len = c_len; 
-		cout << "weight=" << len << " ";
+		len = c_len;
 		waylen = p; 
 		for (int i = 0; i < waylen; i++)
-			way[i] = road[i]; 
-		//	cout << way[i] << endl;
-		//}
-
-		//return true;
+			way.push_back(road[i]); 
 	}
-	else 
-	{ 
-		for (c = 0; c < n; c++) 
-		{ 
-			int w = find(s, c, map); 
-			if (w && !incl[c] && (len == 0 || c_len + w < len)) 
-			{ 
-				road[p] = c; 
-				incl[c] = true; 
+	else { 
+		for (int i = 0; i < map.size(); i++) { 
+			int w = find(s, map[i].c, map); 
+			if (w > 0 && !incl[p] && (len == 0 || c_len + w < len)) { 
+				road[p] = map[i].c; 
+				incl[p] = true; 
 				c_len += w; 
-				step(c, f, p + 1, map, found, c_len, c_len, waylen, way, road, n, incl); 
+				step(map[i].c, f, p + 1, map, found, len, c_len, waylen, way, road, n, incl); 
 				road[p] = 0; 
-				incl[c] = false;
+				incl[p] = false;
 				c_len -= w;
 			}
 		}
 	}
 }
 
+
+
 void Puti(unordered_map<int, vector<id_in_pipe>>& graph, unordered_map <int, CKS>& kss, unordered_map <int, Truba>& pipe, unordered_set<int>idks)
 {
-
 	vector<item>map;
-
-	//struct item map[m] = { //ana iooe, ioia?aoey oceia n ioey
-	// {0,1,1}, {0,2,1}, {2,3,1}, {1,4,1}, {2,4,1},
-	// {4,5,1}, {4,7,1}, {5,6,1}, {6,7,1}
-	//};
-	const int n = 4; //eiee?anoai aa?oei a?aoa
-	int road[n]; //iiia?a oceia oaeouae "ai?iae"
-	bool incl[n]; //true, anee i-ay aa?oeia aee??aia a ioou
-	int way[n]; //eneiiue naiue ei?ioeee ioou
-	int waylen; //aai aeeia
-	int start, finish; //ia?aeuiay e eiia?iay aa?oeiu
+	int n = idks.size(); 
+	vector<int>road;
+	vector<bool>incl; 
+	vector<int> way; 
+	int waylen; 
+	int start, finish; 
 	bool found;
-	int len; //iaeaaiiue "aan" ia?o?ooa
-	int c_len; //oaeouee "aan" ia?o?ooa
-	//if (destinationVertex == sourceVertex)
-	//	cout << "This KS as start and finish" << endl;
-	//else if ((kss.find(sourceVertex) == kss.end()) || (kss.find(destinationVertex) == kss.end()))
-	//	cout << "Have not this KSs or one of this KSs";
-	//else
-	{
-		for (auto it = pipe.begin(); it != pipe.end(); ++it) {
-			int s, c, v;
-			if (it->second.get_id_in() != 0)
-			{
-				s = it->second.get_id_out();
-				c = it->second.get_id_in();
-				v = it->second.get_length();
-				map.push_back(CreateItem(s, c, v));
-			}
-		}
-		for (int i = 0; i < n; i++) {
-			road[i] = way[i] = 0; incl[i] = false;
-		}
-		len = c_len = waylen = 0;
-
-		start = 1; //ia?aei iooe - ioia?aoey n 0
-		finish = 2; //eiiao iooe - ioia?aoey n 0
-		road[0] = start; //ia?ao? oi?eo aianee a ia?o?oo
-		incl[start] = true; //e iiiaoeee eae aee???iio?
-		found = false; //ii ioou iiea ia iaeaai
-
-		step(start, finish, 1, map, found, len, c_len, waylen, way, road, n, incl); //euai aoi?o? oi?eo
-
-		int a = 0;
-		for (auto& i : way)
+	int len; 
+	int c_len; 
+	for (auto it = pipe.begin(); it != pipe.end(); ++it) {
+		int s, c, v;
+		if (it->second.get_id_in() != 0)
 		{
-			if (way[i] != 0)
-				a = a + 1;
+			s = it->second.get_id_out();
+			c = it->second.get_id_in();
+			v = it->second.get_length();
+			map.push_back(CreateItem(s, c, v));
 		}
-		if (a > 0) {
-			//for (auto& j:way)
-			//for (int i=0;i< map.size();i++)
-			//{
-			//	if ((map[i].s == way[j]) && (map[i].c == way[j + 1]))
-			//		len = len +map[i].v;
-			//}
+	}
+	for (int i = 0; i < n; i++) {
+		incl.push_back(false);
+		road.push_back(0);
+	}
+	len = c_len = waylen = 0;
+	cout << "Start: ";
+	cin >> start;
+	cout << "Finish: ";
+	cin >> finish;
+	if (start == finish)
+		cout << "This KS as start and finish" << endl;
+	else if ((kss.find(start) == kss.end()) || (kss.find(finish) == kss.end()))
+		cout << "Have not this KSs or one of this KSs";
+	else if (idks.count(start) == 0 || idks.count(finish) == 0)
+		cout << "Have not a way" << endl;
+	else
+	{
+		road[0] = start; 
+		incl[0] = true; 
+		found = false; 
+
+		step(start, finish, 1, map, found, len, c_len, waylen, way, road, n, incl); 
+
+		if (found == true)
+		{
 			cout << "Way is";
-			for (auto& i : way) cout << " " << way[i];
-			cout << ", weight is " << len;
+			for (int i = 0; i < way.size(); i++) cout << "   >    " << way[i];
+			cout << "     weight is " << len;
 		}
 		else cout << "Way not found!";
 		cout << endl;
 	}
-
 }
-
-
-
-
-
-//void Puti(unordered_map<int, vector<id_in_pipe>>& graph, unordered_map <int, KS>& kss, unordered_map <int, Truba>& pipe, unordered_set<int>idks)
-//{
-//	unordered_map<int,unordered_map<int,int>>matr;
-//	int n = idks.size();
-//	int a = 0;
-//	int b = 0;
-//	for (int i=0;i< n;i++)
-//	{
-//		for (int j = 0;j < n;j++)
-//		{
-//			if ()
-//			b = b + 1;
-//		}
-//		a = a + 1;
-//	}
-//}

@@ -1,0 +1,24 @@
+6
+5
+Pipe id: 1 Name: w Length: 2 Diameter: 3 Ne v remonte
+
+Pipe id: 2 Name: w Length: 234 Diameter: 133 Ne v remonte
+
+Pipe id: 3 Name: q Length: 879 Diameter: 432 Ne v remonte
+
+Pipe id: 4 Name: h Length: 875 Diameter: 213 Ne v remonte
+
+Pipe id: 5 Name: vb Length: 463 Diameter: 235 Ne v remonte
+
+Pipe id: 6 Name: k Length: 36 Diameter: 23 Ne v remonte
+
+Compressor id: 1 Name: v Number of workshops in work/Number of workshop = 13/42 = 30% Efficiency: 1
+
+Compressor id: 2 Name: b Number of workshops in work/Number of workshop = 35/56 = 62% Efficiency: 3
+
+Compressor id: 3 Name: h Number of workshops in work/Number of workshop = 5/98 = 5% Efficiency: 3
+
+Compressor id: 4 Name: j Number of workshops in work/Number of workshop = 45/65 = 69% Efficiency: 3
+
+Compressor id: 5 Name: m Number of workshops in work/Number of workshop = 32/65 = 49% Efficiency: 1
+
